@@ -13,6 +13,8 @@ const Model = require('./Model');
 
 
 const app=express();
+app.use(express.json());             
+app.use(express.urlencoded());
 app.set('view engine','ejs');
 app.get('/register',function(req,res){
         /*rendering the resgister page*/
@@ -23,9 +25,9 @@ app.post('/save',async function(req,res){
     /*save data from req to database*/
     const user= await Model.create({
         Name:req.name,
-        Username:req.username,
-        password:req.password,
-        phone_no:req.phone_no
+        Username:req.bodyusername,
+        password:req.body.password,
+        phone_no:req.body.phone_no
     })
     user.save();
     res.redirect('/login');
@@ -56,10 +58,13 @@ app.post('/forgot',function(req,res){
 })
 app.post('/passUpdate',async function(req,res){
     console.log(req.body)
-    const {user_name,pass,otp}=req.body;
+    const user_name=req.body.username
+    const pass=req.body.password
+    console.log(user_name);
     const  user= await Model.findOneAndUpdate({Username:user_name},{password:pass});
     console.log(user);
     res.redirect('/login');
 })
 app.listen(3000);
+
 
